@@ -7,14 +7,13 @@ import "./globals.css"
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
-
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.flores247.com'),
   title: {
     default: "Flores247 - Login to Your Benefits Account",
     template: "%s | Flores247"
   },
-   keywords: [
+  keywords: [
     "Flores247",
     "flores247.com portal",
     "flores247 app",
@@ -137,10 +136,8 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    
-    
-    
-    
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    yandex: process.env.YANDEX_VERIFICATION || undefined,
   },
   alternates: {
     canonical: "/",
@@ -153,52 +150,189 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Organization Schema
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Flores & Associates",
+    "url": "https://www.flores247.com",
+    "logo": "https://www.flores247.com/flores.png",
+    "description": "Flores & Associates provides comprehensive benefits administration services including FSA, HSA, HRA, and COBRA plans for employers and employees.",
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "url": "https://www.flores247.com/contact-login.vbhtml",
+        "availableLanguage": ["en"]
+      },
+      {
+        "@type": "ContactPoint",
+        "contactType": "Technical Support",
+        "url": "https://www.flores247.com/contact-login.vbhtml"
+      }
+    ],
+    "sameAs": [
+      "https://www.facebook.com/FloresAssociates",
+      "https://www.linkedin.com/company/flores-&-associates"
+    ],
+    "areaServed": ["US"],
+    "knowsAbout": ["FSA", "HSA", "HRA", "COBRA", "Benefits Administration", "Employee Benefits"]
+  }
+
+  // Web Application Schema
+  const webAppSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Flores247",
+    "url": "https://www.flores247.com",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Secure login portal for Flores benefits account management, including FSA, HSA, HRA, and COBRA plans."
+  }
+
+  // FAQ Schema for Rich Snippets
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I login to Flores247?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Visit flores247.com and enter your username and password on the login page. Select your user role (Participant, Employer, or Broker) and click LOGIN. If you forgot your password, use the 'Forgot Password' link to reset it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is an FSA and how do I file a claim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An FSA (Flexible Spending Account) is a pre-tax benefits account for qualified medical or dependent care expenses. To file an FSA claim through Flores247, log in to your account, navigate to 'File Claims', submit your receipts or documentation, and track your reimbursement status."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I check my HSA balance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Log into your Flores247 account and navigate to the 'Benefits Balance' or 'Account Summary' section. You can view your current HSA balance, transaction history, and eligible expenses in real-time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I reset my Flores247 password?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Click the 'Forgot Password' link on the Flores247 login page. Follow the account recovery steps to verify your identity and create a new password for your benefits account."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What benefits can I manage through Flores247?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Flores247 allows you to manage FSA (Flexible Spending Accounts), HSA (Health Savings Accounts), HRA (Health Reimbursement Arrangements), COBRA continuation coverage, and other employee benefits offered by your employer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I upload receipts for reimbursement?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Log into Flores247, go to the 'File Claims' or 'Submit Documentation' section, and upload your receipts or documentation. You can submit documents online and track your reimbursement status."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are HSA eligible expenses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HSA eligible expenses include qualified medical expenses such as doctor visits, prescriptions, dental care, vision care, and medical equipment. Visit the IRS website or contact Flores benefits customer service for a complete list."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I make a COBRA payment through Flores247?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you have COBRA coverage, log into your Flores247 account, navigate to the COBRA payment portal, and make your contribution payments securely online or by mail."
+        }
+      }
+    ]
+  }
+
+  // Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.flores247.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Login",
+        "item": "https://www.flores247.com/login"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Benefits",
+        "item": "https://www.flores247.com/benefits"
+      }
+    ]
+  }
+
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to external domains for performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="font-sans antialiased">
         {children}
         <Analytics />
         
+        {/* Organization Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "Flores & Associates",
-              "url": "https://www.flores247.com",
-              "logo": "https://www.flores247.com/flores.png",
-              "description": "Flores & Associates provides comprehensive benefits administration services including FSA, HSA, and HRA plans.",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "Customer Service",
-                "url": "https://www.flores247.com/contact-login.vbhtml"
-              },
-              "sameAs": [
-                "https://www.facebook.com/FloresAssociates",
-                "https://www.linkedin.com/company/flores-&-associates"
-              ]
-            })
+            __html: JSON.stringify(organizationSchema)
           }}
         />
         
+        {/* Web Application Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "Flores247",
-              "url": "https://www.flores247.com",
-              "applicationCategory": "FinanceApplication",
-              "operatingSystem": "Web",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-              },
-              "description": "Secure login portal for Flores benefits account management, including FSA, HSA, and HRA plans."
-            })
+            __html: JSON.stringify(webAppSchema)
+          }}
+        />
+
+        {/* FAQ Schema - Rich Snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema)
+          }}
+        />
+
+        {/* Breadcrumb Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbSchema)
           }}
         />
       </body>
